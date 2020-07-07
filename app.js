@@ -16,21 +16,12 @@ app.post('/', function (req, res) {
     res.send('This is a post data');
 });
 //使用mysql中间件连接MySQL数据库
-const mysql = require('mysql')
-const connection = mysql.createConnection({
-    host: 'localhost',           //数据库地址
-    user: 'root',               //用户名
-    password: '123456',           //密码
-    port: '3306',              //端口
-    database: 'cn_opencart',           //库名
-    multipleStatements: true     //允许执行多条语句
-})
-
+const db = require('./db/db')
 
 // 查询
 app.get('/api/getuser', (req, res, next) => {
     const sql = 'SELECT * FROM oc_user' //user为表名
-    connection.query(sql, (err, results) => {
+    db.selectAll(sql, (err, results) => {
         if (err) {
             return res.json({
                 code: 1,
@@ -47,7 +38,7 @@ app.get('/api/getuser', (req, res, next) => {
 })
 app.get('/api/product_list', (req, res, next) => {
     const sql = "SELECT * FROM oc_product"
-    connection.query(sql, (err, result) => {
+    db.selectAll(sql, (err, result) => {
         if (err) {
             return res.json({
                 code: 1,
