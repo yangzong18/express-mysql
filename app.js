@@ -1,70 +1,28 @@
-const express = require('express')
-const app = express()
-// CORS模块，处理web端跨域问题
-const cors = require('cors')
-app.use(cors())
+const db = require('./models/index');
+console.log(db)
 
-//body-parser 解析表单
-const bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
 
-app.get('/', function (req, res) {
-    res.send('Birds home page');
-});
-app.post('/', function (req, res) {
-    res.send('This is a post data');
-});
-//使用mysql中间件连接MySQL数据库
-const mysql = require('mysql')
-const connection = mysql.createConnection({
-    host: 'localhost',           //数据库地址
-    user: 'root',               //用户名
-    password: '123456',           //密码
-    port: '3306',              //端口
-    database: 'cn_opencart',           //库名
-    multipleStatements: true     //允许执行多条语句
+
+//定义我们的User 表
+
+var User = dbStroage.define('user', {
+    username: Sequelize.STRING,
+    password: Sequelize.STRING
 })
 
-
-// 查询
-app.get('/api/getuser', (req, res, next) => {
-    const sql = 'SELECT * FROM oc_user' //user为表名
-    connection.query(sql, (err, results) => {
-        if (err) {
-            return res.json({
-                code: 1,
-                message: '用户不存在',
-                affextedRows: 0
-            })
-        }
-        res.json({
-            code: 200,
-            data: results,
-            affextedRows: results.affextedRows
+//如果是第一次运行的话,需要用sync 方法创建表
+dbStroage.sync()
+    .success(function () {
+        //用sequelize创建我们第一个用户
+        User.create({
+            username: 'youxiachai',
+            password: '123456'
+        }).done(function (err, result) {
+            console.log(err)
+            console.log(result)
         })
     })
-})
-app.get('/api/product_list', (req, res, next) => {
-    const sql = "SELECT * FROM oc_product"
-    connection.query(sql, (err, result) => {
-        if (err) {
-            return res.json({
-                code: 1,
-                message: '商品不存在',
-                affextedRows: 0
-            })
-        }
-        res.json({
-            code: 0,
-            data: result,
-            affextedRows: result.affextedRows
-        })
+    .error(function (err) {
+        console.log(err);
+
     })
-})
-
-
-//启动服务，端口3001
-app.listen(3001, () => {
-    console.log('服务启动成功:' + `http://localhost:3001/`)
-})
