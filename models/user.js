@@ -14,9 +14,41 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   User.init({
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    email: DataTypes.STRING
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notNull: {
+          msg: "firstName 不能为空"
+        },
+      }
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notNull: {
+          msg: "lastName 不能为空"
+        },
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notNull: {
+          msg: "email 不能为空"
+        },
+        isEmail: true,
+        isEmail: {
+          msg: "email 格式错误"
+        },
+      }
+
+    }
   }, {
     sequelize,
     modelName: 'User',

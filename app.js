@@ -51,7 +51,22 @@ app.get('/api/getuser/:email', (req, res, next) => {
     })
 })
 app.post('/api/adduser', (req, res, next) => {
-    console.log(req.params)
+    db.User.create({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email
+    }).then(result => {
+        return res.json({
+            code: 200,
+            data: result,
+            affextedRows: result.affextedRows
+        })
+    }).catch(error => {
+        return res.json({
+            code: 201,
+            error: error.message,
+        })
+    })
 })
 ////////////////////// 所有路由定义完之后，最后做404处理 /////////////////////////////
 app.get('*', function (req, res) {
