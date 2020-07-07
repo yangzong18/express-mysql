@@ -1,14 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": 123456,
+    "password": "123456",
     "database": "data_express",
     "host": "localhost",
-    "port": "3306",
-    "dialect": "mysql",
-    "seederStorage": "json",
-    "seederStoragePath": "sequelizeData.json",
-    "seederStorageTableName": "sequelize_data",
-    "timezone": "+08:00"
+    "dialect": "mysql"
   }
 }

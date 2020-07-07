@@ -1,28 +1,42 @@
-const db = require('./models/index');
-console.log(db)
+const express = require('express')
+const app = express()
+const db = require('./models/index')
+// CORS模块，处理web端跨域问题
+const cors = require('cors')
+app.use(cors())
 
-
-
-//定义我们的User 表
-
-var User = dbStroage.define('user', {
-    username: Sequelize.STRING,
-    password: Sequelize.STRING
-})
-
-//如果是第一次运行的话,需要用sync 方法创建表
-dbStroage.sync()
-    .success(function () {
-        //用sequelize创建我们第一个用户
-        User.create({
-            username: 'youxiachai',
-            password: '123456'
-        }).done(function (err, result) {
-            console.log(err)
-            console.log(result)
+app.get('/', function (req, res) {
+    res.send('Birds home page');
+});
+app.get('/api/getuser', (req, res, next) => {
+    db.User.findAll({
+    }).then(result => {
+        return res.json({
+            code: 200,
+            data: result,
+            affextedRows: result.affextedRows
         })
+    }).catch(error => {
+        console.log(error)
     })
-    .error(function (err) {
-        console.log(err);
-
+})
+app.get('/api/getuser/email', (req, res, next) => {
+    console.log(req.query)
+    db.User.findOne({
+        where: {
+            email: req.query.email
+        }
+    }).then(result => {
+        return res.json({
+            code: 200,
+            data: result,
+            affextedRows: result.affextedRows
+        })
+    }).catch(error => {
+        console.log(error)
     })
+})
+//启动服务，端口3001
+app.listen(3001, () => {
+    console.log('服务启动成功:' + `http://localhost:3001/`)
+})
