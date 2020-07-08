@@ -29,10 +29,9 @@ app.get('/api/getuser', (req, res, next) => {
         return res.json({
             code: 200,
             data: result,
-            affextedRows: result.affextedRows
         })
     }).catch(error => {
-        console.log(error)
+        next(error)
     })
 })
 app.get('/api/getuser/:email', (req, res, next) => {
@@ -44,10 +43,9 @@ app.get('/api/getuser/:email', (req, res, next) => {
         return res.json({
             code: 200,
             data: result,
-            affextedRows: result.affextedRows
         })
     }).catch(error => {
-        console.log(error)
+        next(error)
     })
 })
 app.post('/api/adduser', (req, res, next) => {
@@ -59,22 +57,29 @@ app.post('/api/adduser', (req, res, next) => {
         return res.json({
             code: 200,
             data: result,
-            affextedRows: result.affextedRows
         })
     }).catch(error => {
-        return res.json({
-            code: 201,
-            error: error.message,
-        })
+        next(error)
     })
 })
-////////////////////// 所有路由定义完之后，最后做404处理 /////////////////////////////
-app.get('*', function (req, res) {
+// 404处理中间件，对express来说，404不是error
+function handleNotFoundMidWare(req, res, next) {
     res.json({
-        code: 404,
-        message: '接口不存在'
+        message: 'api不存在'
     })
-});
+}
+// 自定义一个处理异常的中间件
+function handleErrMidWare(err, req, res, next) {
+    if (err) {
+        let { message } = err;
+        res.status(500).json({
+            message
+        })
+    }
+}
+// 404和异常处理的中间件放到最后面
+app.use(handleNotFoundMidWare);
+app.use(handleErrMidWare);
 //启动服务，端口3001
 app.listen(3001, () => {
     console.log('服务启动成功:' + `http://localhost:3001/`)
